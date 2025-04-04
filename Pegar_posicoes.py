@@ -8,7 +8,7 @@ def get_mouse_position():
     
     x, y = pyautogui.position()
     
-    # Print the coordinates
+  
     print(f"Mouse position: ({x}, {y})")
 
 
