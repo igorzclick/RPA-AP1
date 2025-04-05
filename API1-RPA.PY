@@ -1,94 +1,50 @@
 import time
 import pandas as pd
 import pyautogui as p
+import openpyxl
+import re
 
-def abrir_navegador():
-    p.press('win')
-    time.sleep(2)
-    p.write('opera')
-    time.sleep(5)
-    p.press('enter')
-    time.sleep(5)
+# Funções auxiliares
+def esperar(valor):
+    print(f"Aguardando {valor} segundos...")
+    time.sleep(int(valor))
 
-def abrir_site():
-    p.write('https://www.impacta.edu.br')
-    time.sleep(2)
-    p.press('enter')
-    time.sleep(5)
+def pressionar_tecla(tecla):
+    if "tab" in tecla.lower():
+        match = re.search(r"(\d+)", tecla)
+        if match:
+            vezes = int(match.group(1))
+            print(f"Pressionando TAB {vezes} vezes")
+            p.press('tab', presses=vezes)
+    else:
+        print(f"Pressionando tecla: {tecla}")
+        p.press(tecla)
+        time.sleep(2)
 
-def login():
-    # Mouse position: (1647, 137)--> posição do mouse no botão de login da home da faculdade
-    p.press('tab',presses=4)  # Clique no campo de login
-    time.sleep(2)
-    p.press('enter')
-    time.sleep(5)    
-    # Mouse position: (956, 447)--> posição do mouse no campo de inserir o RA
-    p.click(x=956, y=447) 
-    p.write('2303701') #RA
-    time.sleep(2)
-    p.press('tab')
-    time.sleep(2)
-    p.write('Harminda#2403')  #SENHA
-    time.sleep(2)
-    p.press('tab')
-    time.sleep(2)
-    p.press('enter')
-    time.sleep(2)
-    p.press('tab')
-    time.sleep(2)
-    p.press('enter')
-    time.sleep(10)
+def digitar_texto(texto):
+    print(f"Digitando: {texto}")
+    p.write(str(texto))
+    time.sleep(1)
+
+# Lê a planilha
+arquivo = 'Tarefas.xlsx'
+df = pd.read_excel(arquivo, engine='openpyxl')
+
+# Itera pelas tarefas
+for _, row in df.iterrows():
+    tarefa = str(row["Tarefa"]).strip().lower()
+    tipo = str(row["Tipo"]).strip()
+    data = str(row["Dado"]).strip()
     
+    print(f"Executando tarefa: {tarefa}")
 
-def logout():
-# Mouse position: (1868, 219)--> posição do mouse no botão de logout
-    p.press('tab',presses=3)# Clique no botão de logout
-    time.sleep(2)
-   
-       
-abrir_navegador()
-abrir_site()
-login()       
-
-# # arquivo='Tarefas.xslsx'
-# # if os.path.exists(arquivo):
-# #     p.alert("arquivo encontrado")
-# # else:
-# #     p.alert("arquivo não encontrado")
-# #     p.alert("crie o arquivo tarefas.csv com as colunas: tarefa, data, hora, status")
-
-
-# df = pd.read_excel('Tarefas.xlsx', engine='openpyxl')
-# for index, row in df.iterrows():
-#     if row["Status"] == "Abrir navegador":
-#         abrir_navegador()
-#         time.sleep(2)
-#         index+1
-#     elif row["Digitar site"] == "Abrir site": 
-#         abrir_site()
-#         time.sleep(2)
-#         index+1
-#     elif row["Digitar login"] == "Login":
-#         login()
-#         time.sleep(2)
-#         index+1
-#     elif row["Logout"] == "Logout":
-#         logout()
-#         time.sleep(2)
-#         index+1
-#     elif pd.isna(index) or index=="":
-#         p.alert("acabaram as tarefas")
-#         time.sleep(2)
-#         break
-
-
-
-    
-
+    if tipo.lower() == "espera":
+        esperar(data)
         
+    elif tipo.lower() == "tecla":
+        pressionar_tecla(data)
 
+    elif tipo.lower() == "texto":
+        digitar_texto(data)
 
-
-
-
-
+p.alert("Automação finalizada.")
