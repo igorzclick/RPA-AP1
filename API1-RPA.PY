@@ -15,7 +15,7 @@ def pressionar_tecla(tecla):
         if match:
             vezes = int(match.group(1))
             print(f"Pressionando TAB {vezes} vezes")
-            p.press('tab', presses=vezes)
+            p.press('tab', presses=vezes,interval=0.56)
     else:
         print(f"Pressionando tecla: {tecla}")
         p.press(tecla)
@@ -27,11 +27,12 @@ def digitar_texto(texto):
     time.sleep(1)
 
 # Lê a planilha
-arquivo = 'Tarefas.xlsx'
+arquivo = r'C:\Users\Igor\Desktop\RPA\RPA-AP1\Tarefas.xlsx'
 df = pd.read_excel(arquivo, engine='openpyxl')
 
 # Itera pelas tarefas
-for _, row in df.iterrows():
+for _, row in df.iterrows():                        
+
     tarefa = str(row["Tarefa"]).strip().lower()
     tipo = str(row["Tipo"]).strip()
     data = str(row["Dado"]).strip()
